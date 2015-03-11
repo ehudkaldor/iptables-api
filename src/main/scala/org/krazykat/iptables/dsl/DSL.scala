@@ -58,6 +58,8 @@ case class Zero(table: _Table, chain: _Chain, ruleNum: RuleNum) extends _Command
 object Zero {
   def apply(chain: _Chain, ruleNum: RuleNum): Zero = new Zero(Filter(), chain, ruleNum)
   def apply(chain: _Chain): Zero = new Zero(Filter(), chain, null)  { override val command = s" iptables -t $table --zero $chain " }
+  def apply(table: _Table, chain: _Chain): Zero = new Zero(table, chain, null)  { override val command = s" iptables -t $table --zero $chain " }
+  def apply(table: _Table): Zero = new Zero(table, null, null) { override val command = s" iptables -t $table --zero " }
   def apply(): Zero = new Zero(Filter(), null, null) { override val command = s" iptables -t $table --zero " }
 }
 

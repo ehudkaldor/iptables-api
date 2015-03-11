@@ -18,11 +18,11 @@ class DSLspec extends Specification {
   "Generate flush commands" should {
     "generate flush command with table nat and chain INPUT" in {
       val command = Flush(Nat(), Input())
-      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t nat INPUT --flush ")
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t nat --flush INPUT ")
     }
     "generate flush command with no table and chain FORWARD" in {
       val command = Flush(Forward())
-      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter FORWARD --flush ")
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter --flush FORWARD ")
     }
     "generate flush command with no table and no chain" in {
       val command = Flush()
@@ -31,17 +31,29 @@ class DSLspec extends Specification {
   }
   
   "Generate zero commands" should {
-    "generate zero command with table nat and chain INPUT" in {
+    "generate zero command with no table and no chain" in {
+      val command = Zero()
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter --zero ")
+    }
+    "generate zero command with table raw and no chain" in {
+      val command = Zero(Raw())
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t raw --zero ")
+    }
+    "generate zero command with no table and chain FORWARD" in {
+      val command = Zero(Forward())
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter --zero FORWARD ")
+    }
+    "generate zero command with table nat and chain INPUT and no rule number" in {
       val command = Zero(Nat(), Input())
-      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t nat INPUT --flush ")
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t nat --zero INPUT ")
     }
-    "generate flush command with no table and chain FORWARD" in {
-      val command = Flush(Forward())
-      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter FORWARD --flush ")
+    "generate zero command with table mangle and chain INPUT and rule num 3" in {
+      val command = Zero(Mangle(), Input(), RuleNum(3))
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t mangle --zero INPUT 3 ")
     }
-    "generate flush command with no table and no chain" in {
-      val command = Flush()
-      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter --flush ")
+    "generate zero command with no table and chain OUTPUT and rule num 15" in {
+      val command = Zero(Output(), RuleNum(15))
+      command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables -t filter --zero OUTPUT 15 ")
     }
   }
 }
