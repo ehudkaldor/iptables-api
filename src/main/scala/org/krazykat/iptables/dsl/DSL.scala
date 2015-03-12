@@ -1,26 +1,12 @@
 package org.krazykat.iptables.dsl
 
-  case class ListRules(table: _Table, chain: _Chain)
-  case class CreateChain(table: _Table, chainName: String)
-  case class DeleteChain(table: _Table, chain: _Chain)
-  case class RenameChain(table: _Table, chain: _Chain, newName: String)
-  
-abstract class _Rule { override def toString = construct; def construct: String}
-case class RuleSpec() extends _Rule { override def construct: String = "" }
-case class RuleNum(num: Int) extends _Rule { override def construct: String = num.toString }
-
-
-abstract class _Table(table: String) { override def toString = table}
-case class Filter() extends _Table(" filter ")
-case class Nat() extends _Table(" nat ")
-case class Mangle() extends _Table(" mangle ")
-case class Raw() extends _Table(" raw ")
-case class Security() extends _Table(" security ")
-
-abstract class _GetInfo(val command: String) { override def toString = command}
-case class List(table: _Table, chain: _Chain) extends _GetInfo(s" iptables ")
-
+/****************************************
+ *                                      *
+ *              Commands                *
+ *                                      *
+ ****************************************/
 abstract class _Command(val command: String) { override def toString = command}
+
 case class Append(table: _Table, chain: _Chain, ruleSpec: RuleSpec) extends _Command(s" iptables --table $table --append $chain $ruleSpec ")
 object Append {
   def apply(chain: _Chain, ruleSpec: RuleSpec): Delete = new Delete(Filter(), chain, ruleSpec) 
@@ -61,8 +47,6 @@ object Zero {
   def apply(table: _Table): Zero = new Zero(table, null, null) { override val command = s" iptables --table $table --zero " }
   def apply(): Zero = new Zero(Filter(), null, null) { override val command = s" iptables --table $table --zero " }
 }
-
-
 
 abstract class _Jump(target: String)
 case class Jump(dest: String) extends _Jump(dest)
