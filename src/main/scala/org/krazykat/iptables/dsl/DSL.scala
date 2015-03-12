@@ -1,9 +1,5 @@
 package org.krazykat.iptables.dsl
 
-//  case class AddRule(table: _Table, chain: _Chain, rule: Rule)
-//  case class InsertRule(table: _Table, chain: _Chain, rule: Rule, index: Int = 0)
-//  case class DeleteRule(table: _Table, chain: _Chain, rule: Rule)
-  case class List(table: _Table)
   case class ListRules(table: _Table, chain: _Chain)
   case class CreateChain(table: _Table, chainName: String)
   case class DeleteChain(table: _Table, chain: _Chain)
@@ -21,46 +17,49 @@ case class Mangle() extends _Table(" mangle ")
 case class Raw() extends _Table(" raw ")
 case class Security() extends _Table(" security ")
 
+abstract class _GetInfo(val command: String) { override def toString = command}
+case class List(table: _Table, chain: _Chain) extends _GetInfo(s" iptables ")
+
 abstract class _Command(val command: String) { override def toString = command}
-case class Append(table: _Table, chain: _Chain, ruleSpec: RuleSpec) extends _Command(s" iptables -t $table --append $chain $ruleSpec ")
+case class Append(table: _Table, chain: _Chain, ruleSpec: RuleSpec) extends _Command(s" iptables --table $table --append $chain $ruleSpec ")
 object Append {
   def apply(chain: _Chain, ruleSpec: RuleSpec): Delete = new Delete(Filter(), chain, ruleSpec) 
 }
 
-case class Check(table: _Table, chain: _Chain, ruleSpec: RuleSpec) extends _Command(s" iptables -t $table --check $chain $ruleSpec ")
+case class Check(table: _Table, chain: _Chain, ruleSpec: RuleSpec) extends _Command(s" iptables --table $table --check $chain $ruleSpec ")
 object Check {
   def apply(chain: _Chain, ruleSpec: RuleSpec): Check = new Check(Filter(), chain, ruleSpec) 
 }
 
-case class Delete(table: _Table, chain: _Chain, rule: _Rule) extends _Command(s" iptables -t $table --delete $chain $rule ")
+case class Delete(table: _Table, chain: _Chain, rule: _Rule) extends _Command(s" iptables --table $table --delete $chain $rule ")
 object Delete {
   def apply(chain: _Chain, rule: _Rule): Delete = new Delete(Filter(), chain, rule) 
 }
 
-case class Replace(table: _Table, chain: _Chain, ruleNum: RuleNum, ruleSpec: RuleSpec) extends _Command(s" iptables -t $table --delete $chain $ruleNum $ruleSpec ")
+case class Replace(table: _Table, chain: _Chain, ruleNum: RuleNum, ruleSpec: RuleSpec) extends _Command(s" iptables --table $table --delete $chain $ruleNum $ruleSpec ")
 object Replace {
   def apply(chain: _Chain, ruleNum: RuleNum, ruleSpec: RuleSpec): Replace = new Replace(Filter(), chain, ruleNum, ruleSpec)  
 }
 
-case class Insert(table: _Table, chain: _Chain, ruleNum: RuleNum, ruleSpec: RuleSpec) extends _Command(s" iptables -t $table --insert $chain $ruleNum $ruleSpec ")
+case class Insert(table: _Table, chain: _Chain, ruleNum: RuleNum, ruleSpec: RuleSpec) extends _Command(s" iptables --table $table --insert $chain $ruleNum $ruleSpec ")
 object Insert {
   def apply(chain: _Chain, ruleSpec: RuleSpec): Insert = new Insert(Filter(), chain, RuleNum(1), ruleSpec) 
   def apply(table: _Table, chain: _Chain, ruleSpec: RuleSpec): Insert = new Insert(table, chain, RuleNum(1), ruleSpec) 
 }
 
-case class Flush(table: _Table, chain: _Chain) extends _Command(s" iptables -t $table --flush $chain ")
+case class Flush(table: _Table, chain: _Chain) extends _Command(s" iptables --table $table --flush $chain ")
 object Flush {
   def apply(chain: _Chain): Flush = new Flush(Filter(), chain)
-  def apply(): Flush = new Flush(Filter(), null) { override val command = s" iptables -t $table --flush " }
+  def apply(): Flush = new Flush(Filter(), null) { override val command = s" iptables --table $table --flush " }
 }
 
-case class Zero(table: _Table, chain: _Chain, ruleNum: RuleNum) extends _Command(s" iptables -t $table --zero $chain $ruleNum ")
+case class Zero(table: _Table, chain: _Chain, ruleNum: RuleNum) extends _Command(s" iptables --table $table --zero $chain $ruleNum ")
 object Zero {
   def apply(chain: _Chain, ruleNum: RuleNum): Zero = new Zero(Filter(), chain, ruleNum)
-  def apply(chain: _Chain): Zero = new Zero(Filter(), chain, null)  { override val command = s" iptables -t $table --zero $chain " }
-  def apply(table: _Table, chain: _Chain): Zero = new Zero(table, chain, null)  { override val command = s" iptables -t $table --zero $chain " }
-  def apply(table: _Table): Zero = new Zero(table, null, null) { override val command = s" iptables -t $table --zero " }
-  def apply(): Zero = new Zero(Filter(), null, null) { override val command = s" iptables -t $table --zero " }
+  def apply(chain: _Chain): Zero = new Zero(Filter(), chain, null)  { override val command = s" iptables --table $table --zero $chain " }
+  def apply(table: _Table, chain: _Chain): Zero = new Zero(table, chain, null)  { override val command = s" iptables --table $table --zero $chain " }
+  def apply(table: _Table): Zero = new Zero(table, null, null) { override val command = s" iptables --table $table --zero " }
+  def apply(): Zero = new Zero(Filter(), null, null) { override val command = s" iptables --table $table --zero " }
 }
 
 
