@@ -66,11 +66,6 @@ case class OutInterface(interface: String) extends _EndPoint(s" --out-interface 
 case class Source(address: String) extends _EndPoint(s" --source $address ")
 case class Destination(address: String) extends _EndPoint(s" --destination $address ")
 
-abstract class _Chain(name: String){ override def toString = name}
-case class Input() extends _Chain(" INPUT ")
-case class Forward() extends _Chain(" FORWARD ")
-case class Output() extends _Chain(" OUTPUT ")
-
 abstract class _State(name: String)
 case class New() extends _State(" --state NEW ")
 case class Established() extends _State(" --state ESTABLISHED ")
