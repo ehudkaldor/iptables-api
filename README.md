@@ -8,10 +8,11 @@ iptables -t nat -A INPUT -p tcp --dport 80 -j ACCEPT
 
 will be
 
+case class Append(table: _Table, chain: _Chain, protocol: _Protocol, dport: DPort, target: _Target) extends _Command
 case class Nat() extends _Table()
 case class Input() extends _Chain()
 case class Tcp() extends _Protocol()
-case class Accept() extends _Target
+case class Accept() extends _Target()
 
-Command(Nat(), Input(), Tcp(), DPort(80), Accept())
+Append(Nat(), Input(), Tcp(), DPort(80), Accept())
 
