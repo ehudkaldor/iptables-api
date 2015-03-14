@@ -12,8 +12,7 @@ case class Nat() extends _Table()
 case class Input() extends _Chain()
 case class Tcp() extends _Protocol()
 case class Accept() extends _Target()
-Append(Nat(), Input(), Tcp(), DPort(80), Accept())
 
-Command(Nat(), Input(), Tcp(), DPort(80), Accept())
+Append(Nat(), Input(), Tcp(), DPort(80), Accept())
 ```
 
