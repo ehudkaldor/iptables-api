@@ -7,21 +7,13 @@ the base level is a case-class-based DSL to wrap around the Iptables building bl
 iptables -t nat -A INPUT -p tcp --dport 80 -j ACCEPT
 ```
 will be
-<<<<<<< HEAD
-
-case class Append(table: _Table, chain: _Chain, protocol: _Protocol, dport: DPort, target: _Target) extends _Command
-=======
 ```
->>>>>>> 8eca3db56f6799380a94efa86127656add2f314d
 case class Nat() extends _Table()
 case class Input() extends _Chain()
 case class Tcp() extends _Protocol()
 case class Accept() extends _Target()
-
-<<<<<<< HEAD
 Append(Nat(), Input(), Tcp(), DPort(80), Accept())
 
-=======
 Command(Nat(), Input(), Tcp(), DPort(80), Accept())
 ```
->>>>>>> 8eca3db56f6799380a94efa86127656add2f314d
+
