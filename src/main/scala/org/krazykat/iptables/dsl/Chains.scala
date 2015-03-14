@@ -1,6 +1,27 @@
 package org.krazykat.iptables.dsl
 
-abstract class _Chain(name: String){ override def toString = name}
-case class Input() extends _Chain(" INPUT ")
-case class Forward() extends _Chain(" FORWARD ")
-case class Output() extends _Chain(" OUTPUT ")
+abstract class _Chain(val name: String){ override def toString = name}
+sealed abstract class _BuiltInChain(name: String) extends _Chain(name)
+case class Input() extends _BuiltInChain(" INPUT ")
+case class Forward() extends _BuiltInChain(" FORWARD ")
+case class Output() extends _BuiltInChain(" OUTPUT ")
+
+case class CreateChain(table: _Table, chainName: String)
+object CreateChain {
+  def apply(chainName: String): CreateChain = new CreateChain(Filter(), chainName)
+}
+
+case class DeleteChain(table: _Table, chain: _Chain)
+object DeleteChain {
+  def apply(chain: _Chain): DeleteChain = new DeleteChain(Filter(), chain)
+}
+
+case class RenameChain(table: _Table, chain: _Chain, newName: String)
+object RenameChain {
+  def apply(chain: _Chain, newName: String): RenameChain = new RenameChain(Filter(), chain, newName)
+}
+
+case class SetPolicy(table: _Table, chain: _BuiltInChain)
+object SetPolicy {
+  def apply(chain: _BuiltInChain): SetPolicy = new SetPolicy(Filter(), chain)
+}

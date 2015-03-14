@@ -56,4 +56,24 @@ class DSLspec extends Specification {
       command.command.replaceAll("\\s+"  , " ") must be equalTo(" iptables --table filter --zero OUTPUT 15 ")
     }
   }
+  
+  "Generate state for --state" should {
+    "generate single state statement" in {
+      val state = State(Established())
+      state.string.replaceAll("\\s+"  , " ") must be equalTo(" --state ESTABLISHED ")
+    }
+    "generate two states statement" in {
+      val state = State(Established(), Related())
+      state.string.replaceAll("\\s+"  , " ") must be equalTo(" --state ESTABLISHED,RELATED ")
+    }
+    "generate two states statement and avoid repitative states" in {
+      val state = State(Established(), Related(), Established())
+      state.string.replaceAll("\\s+"  , " ") must be equalTo(" --state ESTABLISHED,RELATED ")
+    }
+    "generate three states statement" in {
+      val state = State(Established(), Related(), New())
+      state.string.replaceAll("\\s+"  , " ") must be equalTo(" --state ESTABLISHED,RELATED,NEW ")
+    }
+  }
+  
 }

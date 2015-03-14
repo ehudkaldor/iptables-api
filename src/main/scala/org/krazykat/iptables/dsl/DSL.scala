@@ -5,7 +5,7 @@ package org.krazykat.iptables.dsl
  *              Commands                *
  *                                      *
  ****************************************/
-abstract class _Command(val command: String) { override def toString = command}
+abstract class _Command(val command: String)
 
 case class Append(table: _Table, chain: _Chain, ruleSpec: RuleSpec) extends _Command(s" iptables --table $table --append $chain $ruleSpec ")
 object Append {
@@ -48,12 +48,12 @@ object Zero {
   def apply(): Zero = new Zero(Filter(), null, null) { override val command = s" iptables --table $table --zero " }
 }
 
-abstract class _Jump(target: String)
-case class Jump(dest: String) extends _Jump(dest)
-case class Accept() extends _Jump(" -j ACCEPT ")
-case class Reject() extends _Jump(" -j REJECT ")
-case class Drop() extends _Jump(" -j DROP ")
-case class Log() extends _Jump(" -j LOG ")
+abstract class _Target(target: String)
+case class Jump(dest: String) extends _Target(dest)
+case class Accept() extends _Target(" -j ACCEPT ")
+case class Reject() extends _Target(" -j REJECT ")
+case class Drop() extends _Target(" -j DROP ")
+case class Log() extends _Target(" -j LOG ")
 
 abstract class _Protocol(protocol: String)
 case class TCP() extends _Protocol(" --protocol TCP ")
@@ -65,9 +65,3 @@ case class InInterface(interface: String) extends _EndPoint(s" --in-interface $i
 case class OutInterface(interface: String) extends _EndPoint(s" --out-interface $interface ")
 case class Source(address: String) extends _EndPoint(s" --source $address ")
 case class Destination(address: String) extends _EndPoint(s" --destination $address ")
-
-abstract class _State(name: String)
-case class New() extends _State(" --state NEW ")
-case class Established() extends _State(" --state ESTABLISHED ")
-case class Related() extends _State(" --state RELATED ")
-case class Invalid() extends _State(" --state INVALID ")
